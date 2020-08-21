@@ -1,13 +1,33 @@
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "Zz7s9O7qhkwYmW7ZNmeY+w908dbglN3eIlW5H5co+9dsG8UVZejNXSDwAoPaKeTTcA7shQT3CfT1IrxhF3q0TO0+MWjOgnRlh4hHTc1TF+81NnrFZheiayB3Wr6ItcIBjzfdsoS+3tma+5/Xn2qHxWo5xZAf6f8XiejUarISGkQ="
+
+before_install:
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+addons:
+  coverity_scan:
+    project:
+      name: "bofhbug/justc-envdir"
+      description: "<Your project description here>"
+    notification_email: bofh.bug+github.com@gmail.com
+    # build_command_prepend: "<Your build preprocessing command here>"
+    build_command: "./tools/travis-build"
+    branch_pattern: coverity_scan
+    
+
 language: c
 compiler: gcc
 sudo: false
 dist: trusty
 
 install:
-  - openssl aes-256-cbc -K $OPENSSL_KEY -iv $OPENSSL_IV -in tools/keys.tar.xz.enc -out tools/keys.tar.xz -d
-  - tar xf tools/keys.tar.xz -C tools
-  - gpg --import tools/keys/public.key
-  - gpg --allow-secret-key-import --import tools/keys/private.key
+  #- openssl aes-256-cbc -K $OPENSSL_KEY -iv $OPENSSL_IV -in tools/keys.tar.xz.enc -out tools/keys.tar.xz -d
+  #- tar xf tools/keys.tar.xz -C tools
+  #- gpg --import tools/keys/public.key
+  #- gpg --allow-secret-key-import --import tools/keys/private.key
 
 script:
   - ./tools/travis-build
